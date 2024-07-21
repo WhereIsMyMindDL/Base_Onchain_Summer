@@ -21,6 +21,19 @@ class Onchain_Summer(Account):
 
     @retry
     def login(self):
+        self.session.headers.update({
+            'authority': 'basehunt.xyz',
+            'accept': '*/*',
+            'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+            'origin': 'https://wallet.coinbase.com',
+            'referer': 'https://wallet.coinbase.com/',
+            'sec-ch-ua': '"Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'cross-site',
+        })
         json_data = {
             'gameId': 2,
             'userAddress': self.address,
@@ -34,26 +47,26 @@ class Onchain_Summer(Account):
 
     @retry
     def get_statistics(self):
-            params = {
-                'userAddress': self.address,
-                'gameId': '2',
-            }
-            response = self.session.get('https://basehunt.xyz/api/profile/state', params=params,
-                                        headers=self.session.headers).json()
+        params = {
+            'userAddress': self.address,
+            'gameId': '2',
+        }
+        response = self.session.get('https://basehunt.xyz/api/profile/state', params=params,
+                                    headers=self.session.headers).json()
 
-            referralCode = response['referralData']['referralCode']
-            numReferrals = response['referralData']['numReferrals']
-            currentScore = response['scoreData']['currentScore']
-            numChallengesCompleted = response['numChallengesCompleted']
-            badges = ''
-            badges_list = response['badges']
-            if len(badges_list) > 0:
-                for badge in badges_list:
-                    badges += f'{badge["name"]}, '
-            response = self.session.get('https://basehunt.xyz/api/leaderboard/rank', params=params, headers=self.session.headers).json()
-            rank = response['rank']
+        referralCode = response['referralData']['referralCode']
+        numReferrals = response['referralData']['numReferrals']
+        currentScore = response['scoreData']['currentScore']
+        numChallengesCompleted = response['numChallengesCompleted']
+        badges = ''
+        badges_list = response['badges']
+        if len(badges_list) > 0:
+            for badge in badges_list:
+                badges += f'{badge["name"]}, '
+        response = self.session.get('https://basehunt.xyz/api/leaderboard/rank', params=params, headers=self.session.headers).json()
+        rank = response['rank']
 
-            logger.info(f'\nСтатистика по аккаунту:\nrank: {rank} \nreferralCode: {referralCode} \nnumReferrals: {numReferrals} \ncurrentScore: {currentScore} \nnumChallengesCompleted: {numChallengesCompleted} \nbadges: {badges}')
+        logger.info(f'\nСтатистика по аккаунту:\nrank: {rank} \nreferralCode: {referralCode} \nnumReferrals: {numReferrals} \ncurrentScore: {currentScore} \nnumChallengesCompleted: {numChallengesCompleted} \nbadges: {badges}')
 
     # @retry
     def complete_quest(self, challengeId, name):
@@ -68,6 +81,23 @@ class Onchain_Summer(Account):
         if response['success']:
             logger.success(f'Quest {name}: Успешно завершил задание')
             self.send_list += (f'\n{SUCCESS}Quest {name}: Успешно завершил задание')
+
+    @retry
+    def speen_the_weel(self):
+        self.send_list = ''
+        json_data = {
+            'gameId': '2',
+            'userAddress': self.address,
+        }
+        response = requests.get('https://basehunt.xyz/api/spin-the-wheel', params=json_data, headers=self.session.headers).json()
+        if response['spinData']['hasAvailableSpin']:
+            response = self.session.post('https://basehunt.xyz/api/spin-the-wheel/execute', headers=self.session.headers, json=json_data).json()
+            logger.success(f'Выпало {response["spinData"]["lastSpinResult"]["points"]} поинтов...')
+            self.send_list += (f'\n{SUCCESS}Speen the weel: Выпало {response["spinData"]["lastSpinResult"]["points"]} поинтов...')
+        else:
+            logger.info(f'Нет доступных спинов, ждем до завтра...')
+            self.send_list += (f'\n{SUCCESS}Нет доступных спинов, ждем до завтра...')
+        return self.send_list
 
     # @retry
     def check_quest(self, challengeId, name):
@@ -192,7 +222,6 @@ class Onchain_Summer(Account):
 
     @retry
     def claim_badge(self):
-        Onchain_Summer.login(self)
         badges = {
             1: 'Stand With Crypto',
             2: 'Coinbase One',
