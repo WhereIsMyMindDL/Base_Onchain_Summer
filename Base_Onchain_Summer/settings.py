@@ -16,9 +16,9 @@ bot_id     = 0                                                      # telegram i
 
 ''' 
 registration | первый логин с использованием рефки, запускать один раз
-login | логин 
 claim_badge | клейм доступных бейджей
 get_statistics | получить статистику по аккаунту
+speen_the_weel | ежедневные спины, если стоит первый в маршруте, то запустит бесконечный цикл
 Quests:
 Mister_Miggles | 0.70$ | 1000 XP
 Mister_Miggles_Song_A_Day | 0.35$ | 250 XP
@@ -30,8 +30,7 @@ Eсли указать модули (не меньше 2ух) в [], то они
 
 '''
 rotes_modules = [
-    # ['registration'],
-    ['login'],
+    ['speen_the_weel'],
     [
         ['Mister_Miggles'],
         ['Mister_Miggles_Song_A_Day'],
