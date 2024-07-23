@@ -70,6 +70,7 @@ class Onchain_Summer(Account):
 
         logger.info(f'\nСтатистика по аккаунту:\nrank: {rank} \nreferralCode: {referralCode} \nnumReferrals: {numReferrals} \ncurrentScore: {currentScore} \nnumChallengesCompleted: {numChallengesCompleted} \nbadges: {badges}')
 
+    # @retry
     def complete_quest(self, challengeId, name):
         json_data = {
             'gameId': 2,
@@ -100,6 +101,7 @@ class Onchain_Summer(Account):
             self.send_list += (f'\n{SUCCESS}Нет доступных спинов, ждем до завтра...')
         return self.send_list
 
+    # @retry
     def check_quest(self, challengeId, name):
         json_data = {
             'gameId': 2,
@@ -117,6 +119,7 @@ class Onchain_Summer(Account):
         else:
             return True
 
+    # @retry
     def send_tx(self, name, to, data, value):
         value = int(self.w3.to_wei(value, 'ether')) if type(value) == float else value
         tx_data = get_tx_data(self, data=data, to=to, value=value)
@@ -134,6 +137,7 @@ class Onchain_Summer(Account):
             logger.error(f'Quest {name}: send txs: {self.scan + tx_hash}')
             self.send_list += (f'\n{FAILED}Quest {name}: send txs - [tx hash]({self.scan + tx_hash})')
 
+    # @retry
     def get_tx_data(self, address_nft, tokenId=None):
         json_data = {
             'bypassSimulation': True,
@@ -220,6 +224,7 @@ class Onchain_Summer(Account):
 
     @retry
     def claim_badge(self):
+        self.send_list = ''
         badges = {
             1: 'Stand With Crypto',
             2: 'Coinbase One',
@@ -244,7 +249,8 @@ class Onchain_Summer(Account):
                                          json=json_data).json()
             if response['success']:
                 logger.info(f'Успешно склеймил "{badges[badge]}" badge')
-
+                self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
+                return self.send_list
     @retry
     def Mister_Miggles(self):
         self.send_list = ''
