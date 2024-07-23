@@ -7,8 +7,6 @@ from help import Account, send_message, sleeping_between_wallets, intro, outro
 from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules
 from module import Onchain_Summer
 
-
-
 day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
 
 def main():
@@ -70,8 +68,8 @@ def main():
             logger.info(f'Waiting next day...')
             time.sleep(0.3)
             print()
-            while int(datetime.datetime.now(datetime.timezone.utc).strftime("%d")) == day_now:
-                time.sleep(600)
+            while int(datetime.datetime.now(datetime.timezone.utc).strftime("%d")) == day_now and int(datetime.datetime.now(datetime.timezone.utc).strftime("%H")) < 5:
+                time.sleep(1300)
             day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
             start()
 
