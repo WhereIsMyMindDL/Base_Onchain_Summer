@@ -1,12 +1,14 @@
 import random
 import time
 import requests
+import json
 from loguru import logger
 from requests import Session
 from pyuseragents import random as random_ua
+from eth_account.messages import encode_defunct
 
-from help import Account, retry, sign_and_send_transaction, SUCCESS, FAILED, check_gas, get_tx_data, sleeping_between_transactions
-from settings import  use_only_list_invite_code
+from help import Account, retry, sign_and_send_transaction, SUCCESS, FAILED, check_gas, get_tx_data, sleeping_between_transactions, get_token_price
+from settings import  use_only_list_invite_code, donate_amount
 
 
 class Onchain_Summer(Account):
@@ -68,7 +70,6 @@ class Onchain_Summer(Account):
 
         logger.info(f'\nСтатистика по аккаунту:\nrank: {rank} \nreferralCode: {referralCode} \nnumReferrals: {numReferrals} \ncurrentScore: {currentScore} \nnumChallengesCompleted: {numChallengesCompleted} \nbadges: {badges}')
 
-    # @retry
     def complete_quest(self, challengeId, name):
         json_data = {
             'gameId': 2,
@@ -99,7 +100,6 @@ class Onchain_Summer(Account):
             self.send_list += (f'\n{SUCCESS}Нет доступных спинов, ждем до завтра...')
         return self.send_list
 
-    # @retry
     def check_quest(self, challengeId, name):
         json_data = {
             'gameId': 2,
@@ -117,25 +117,23 @@ class Onchain_Summer(Account):
         else:
             return True
 
-    # @retry
     def send_tx(self, name, to, data, value):
         value = int(self.w3.to_wei(value, 'ether')) if type(value) == float else value
         tx_data = get_tx_data(self, data=data, to=to, value=value)
 
-        logger.info(f'Quest {name}: mint nft...')
+        logger.info(f'Quest {name}: send txs...')
         # gas = random.randit(100000, 120000)
 
         txstatus, tx_hash = sign_and_send_transaction(self, tx_data)
 
         if txstatus == 1:
-            logger.success(f'Quest {name}: mint nft: {self.scan + tx_hash}')
-            self.send_list += (f'\n{SUCCESS}Quest {name}: mint nft - [tx hash]({self.scan + tx_hash})')
+            logger.success(f'Quest {name}: send txs: {self.scan + tx_hash}')
+            self.send_list += (f'\n{SUCCESS}Quest {name}: send txs - [tx hash]({self.scan + tx_hash})')
 
         else:
-            logger.error(f'Quest {name}: mint nft: {self.scan + tx_hash}')
-            self.send_list += (f'\n{FAILED}Quest {name}: mint nft - [tx hash]({self.scan + tx_hash})')
+            logger.error(f'Quest {name}: send txs: {self.scan + tx_hash}')
+            self.send_list += (f'\n{FAILED}Quest {name}: send txs - [tx hash]({self.scan + tx_hash})')
 
-    # @retry
     def get_tx_data(self, address_nft, tokenId=None):
         json_data = {
             'bypassSimulation': True,
@@ -285,6 +283,151 @@ class Onchain_Summer(Account):
             time.sleep(3)
             Onchain_Summer.complete_quest(self, challengeId='6fLQHp51Xb4t94cWVkD96R', name='Seasonal Erosion by Daniel Arsham')
         return self.send_list
+
+    @retry
+    def Team_Liquid_OSPSeries(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='6VRBNN6qr2algysZeorek8', name='Team Liquid OSPSeries'):
+            to, value, data = Onchain_Summer.get_tx_data(self, address_nft='0x1b9ac8580d2e81d7322f163362831448e7fcad1b')
+            Onchain_Summer.send_tx(self,  name='Team Liquid OSPSeries', to=to, data=data, value=value)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='6VRBNN6qr2algysZeorek8', name='Team Liquid OSPSeries')
+        return self.send_list
+
+    @retry
+    def Onchain_Summer_Buildathon(self):
+        self.send_list = ''
+        to, value, data = Onchain_Summer.get_tx_data(self, address_nft='0x0c45CA58cfA181b038E06dd65EAbBD1a68d3CcF3')
+        Onchain_Summer.send_tx(self,  name='Onchain Summer Buildathon', to=to, data=data, value=value)
+        return self.send_list
+
+    # def donate(self):
+    #     donate_usd = round(random.uniform(donate_amount[0], donate_amount[1]), 2)
+    #     donate_session = Session()
+    #     donate_session.headers['user-agent'] = random_ua()
+    #     donate_session.headers.update({
+    #         'authority': 'c.thirdweb.com',
+    #         'accept': '*/*',
+    #         'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    #         'content-type': 'application/json',
+    #         'origin': 'https://www.standwithcrypto.org',
+    #         'referer': 'https://www.standwithcrypto.org/',
+    #         'sec-ch-ua': '"Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109"',
+    #         'sec-ch-ua-mobile': '?0',
+    #         'sec-ch-ua-platform': '"Windows"',
+    #         'sec-fetch-dest': 'empty',
+    #         'sec-fetch-mode': 'cors',
+    #         'sec-fetch-site': 'cross-site',
+    #         'x-bundle-id': '',
+    #         'x-client-id': 'd8044ba7cb9630c86f4891fa70c8318b',
+    #         'x-sdk-name': '@thirdweb-dev/react',
+    #         'x-sdk-os': 'Windows 10',
+    #         'x-sdk-platform': 'browser',
+    #         'x-sdk-version': '4.4.17',
+    #     })
+    #     json_data = {
+    #         'source': 'connectWallet',
+    #         'action': 'connect',
+    #         'walletAddress': self.address,
+    #         'walletType': 'metamask',
+    #     }
+    #
+    #     response = donate_session.post('https://c.thirdweb.com/event', headers=donate_session.headers, json=json_data).json()
+    #     if response['message'] == 'OK':
+    #
+    #         json_data = {
+    #             'address': '0xa1d3aCd1dDEE12B7e834750fB8E28DF02b48029F',
+    #             'chainId': '1',
+    #         }
+    #
+    #         response = donate_session.post('https://www.standwithcrypto.org/api/auth/payload', json=json_data, headers=donate_session.headers, cookies=donate_session.cookies).json()
+    #         msg = f"https://www.standwithcrypto.org wants you to sign in with your Ethereum account:\n{self.address}\n\nPlease ensure that the domain above matches the URL of the current website.\n\nVersion: 1\nChain ID: 1\nNonce: {response['payload']['nonce']}\nIssued At: {response['payload']['issued_at']}\nExpiration Time: {response['payload']['expiration_time']}\nNot Before: {response['payload']['invalid_before']}"
+    #         message = encode_defunct(text=msg)
+    #         text_signature = self.w3.eth.account.sign_message(message, private_key=self.private_key)
+    #         signature_value = text_signature.signature.hex()
+    #
+    #         json_data = {
+    #             'payload': {
+    #                 'payload': {
+    #                     'type': 'evm',
+    #                     'domain': 'https://www.standwithcrypto.org',
+    #                     'address': self.address,
+    #                     'statement': 'Please ensure that the domain above matches the URL of the current website.',
+    #                     'version': '1',
+    #                     'chain_id': '1',
+    #                     'nonce': response['payload']['nonce'],
+    #                     'issued_at': response['payload']['issued_at'],
+    #                     'expiration_time': response['payload']['expiration_time'],
+    #                     'invalid_before': response['payload']['invalid_before'],
+    #                 },
+    #                 'signature': signature_value,
+    #             },
+    #         }
+    #         response = donate_session.post('https://www.standwithcrypto.org/api/auth/login', json=json_data, headers=donate_session.headers, cookies=donate_session.cookies).json()
+    #
+    #         response = donate_session.get('https://www.standwithcrypto.org/api/auth/user').json()
+    #         userId = response['session']['userId']
+    #         json_data = {
+    #             'amount': donate_usd,
+    #         }
+    #         data = '[]'
+    #         donate_session.headers = {
+    #             'authority': 'www.standwithcrypto.org',
+    #             'accept': 'text/x-component',
+    #             'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    #             'content-type': 'text/plain;charset=UTF-8',
+    #             'origin': 'https://www.standwithcrypto.org',
+    #             'referer': 'https://www.standwithcrypto.org/donate',
+    #             'sec-ch-ua': '"Not_A Brand";v="99", "Google Chrome";v="109", "Chromium";v="109"',
+    #             'sec-ch-ua-mobile': '?0',
+    #             'sec-ch-ua-platform': '"Windows"',
+    #             'sec-fetch-dest': 'empty',
+    #             'sec-fetch-mode': 'cors',
+    #             'sec-fetch-site': 'same-origin',
+    #         }
+    #         response = donate_session.post('https://www.standwithcrypto.org/donate', data=data, headers=donate_session.headers, cookies=donate_session.cookies)
+    #
+    #         print(response)
+    #         response = donate_session.put('https://api.commerce.coinbase.com/charges/eb454d0d-7e1a-4ed2-89d8-627a7d18fbd1/set_amount', json=json_data, headers=donate_session.headers, cookies=donate_session.cookies)
+    #
+    #         json_data = {
+    #             'chain_id': 8453,
+    #             'sender': self.address,
+    #             'device_id': userId,
+    #         }
+    #
+    #         response = donate_session.put('https://api.commerce.coinbase.com/charges/e0e7fa3a-7947-43cf-92cd-c2c667f190c1/hydrate', json=json_data, headers=donate_session.headers, cookies=donate_session.cookies).json()
+    #         # print(json.dumps(response, indent=4))
+    #
+    #         signature = response['data']['web3_data']['transfer_intent']['call_data']['signature']
+    #         recipient_amount = int(response['data']['web3_data']['transfer_intent']['call_data']['recipient_amount'])
+    #         fee_amount = int(response['data']['web3_data']['transfer_intent']['call_data']['fee_amount'])
+    #         id = response['data']['web3_data']['transfer_intent']['call_data']['id']
+    #         deadline = int(time.time() + 100000)
+    #
+    #         data = (f'0x8bf122da'
+    #                 f'0000000000000000000000000000000000000000000000000000000000000040'
+    #                 f'00000000000000000000000000000000000000000000000000000000000001f4'
+    #                 f'{hex(recipient_amount)[2:].lower().zfill(64)}' # recipient_amount
+    #                 f'{hex(deadline)[2:].lower().zfill(64)}' # deadline
+    #                 f'000000000000000000000000a4fa26f58fa636e669283cfeee4ae97a48011a5a'
+    #                 f'000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913'
+    #                 f'{self.address[2:].lower().zfill(64)}' # address
+    #                 f'{hex(fee_amount)[2:].lower().zfill(64)}' # fee_amount
+    #                 f'{id[2:].lower().ljust(64, "0")}' # id
+    #                 f'0000000000000000000000008fccc78dae0a8f93b0fe6799de888d4c57e273db'
+    #                 f'0000000000000000000000000000000000000000000000000000000000000140'
+    #                 f'00000000000000000000000000000000000000000000000000000000000001c0'
+    #                 f'0000000000000000000000000000000000000000000000000000000000000041'
+    #                 f'{signature[2:].lower()}'
+    #                 f'00000000000000000000000000000000000000000000000000000000000000'
+    #                 f'000000000000000000000000000000000000000000000000000000000000001d'
+    #                 f'4b3220496e666f726d6174696f6e616c204d6573736167653a20333220000000')
+    #
+    #         price = get_token_price('ETH', 'USDT')
+    #         value_eth = donate_usd / price
+    #         print(donate_usd, f'{"{:0.18f}".format(value_eth)}')
+    #         Onchain_Summer.send_tx(self,  name='Stand With Crypto', to='0xef0d482daa16fa86776bc582aff3dfce8d9b8396', data=data, value=value_eth)
 
     # @retry
     # def Olympic_Games_Paris(self):
