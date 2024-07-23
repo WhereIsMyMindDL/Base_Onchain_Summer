@@ -248,7 +248,7 @@ class Onchain_Summer(Account):
             response = self.session.post('https://basehunt.xyz/api/badges/claim', headers=self.session.headers,
                                          json=json_data).json()
             if response['success']:
-                logger.info(f'Успешно склеймил "{badges[badge]}" badge')
+                logger.success(f'Успешно склеймил "{badges[badge]}" badge')
                 self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
                 return self.send_list
     @retry
