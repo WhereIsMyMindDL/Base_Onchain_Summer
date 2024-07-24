@@ -1,15 +1,15 @@
-import random
 import time
-import requests
 import json
+import random
+import requests
+import pandas as pd
 from loguru import logger
 from requests import Session
 from pyuseragents import random as random_ua
 from eth_account.messages import encode_defunct
 
-from help import Account, retry, sign_and_send_transaction, SUCCESS, FAILED, check_gas, get_tx_data, sleeping_between_transactions, get_token_price
 from settings import  use_only_list_invite_code, donate_amount
-
+from help import Account, retry, sign_and_send_transaction, SUCCESS, FAILED, check_gas, get_tx_data, sleeping_between_transactions, get_token_price
 
 class Onchain_Summer(Account):
     def __init__(self, id, private_key, proxy, rpc):
@@ -21,6 +21,7 @@ class Onchain_Summer(Account):
         if self.proxy != None:
             self.session.proxies.update({'http': f"http://{self.proxy}"})
 
+    @logger.catch
     @retry
     def login(self):
         self.session.headers.update({
@@ -47,6 +48,7 @@ class Onchain_Summer(Account):
         if response['success']:
             logger.success(f'Успешно залогинился...')
 
+    @logger.catch
     @retry
     def get_statistics(self):
         params = {
@@ -63,13 +65,26 @@ class Onchain_Summer(Account):
         badges = ''
         badges_list = response['badges']
         if len(badges_list) > 0:
-            for badge in badges_list:
+            for idx, badge in enumerate(badges_list, start=1):
                 badges += f'{badge["name"]}, '
+            badges = badges[0:-2]
         response = self.session.get('https://basehunt.xyz/api/leaderboard/rank', params=params, headers=self.session.headers).json()
         rank = response['rank']
 
         logger.info(f'\nСтатистика по аккаунту:\nrank: {rank} \nreferralCode: {referralCode} \nnumReferrals: {numReferrals} \ncurrentScore: {currentScore} \nnumChallengesCompleted: {numChallengesCompleted} \nbadges: {badges}')
+        with open('accounts_data.xlsx', 'rb') as file:
+            exel = pd.read_excel(file)
+        exel = exel.astype({'Badges': 'str'})
+        exel = exel.astype({'Referral-code': 'str'})
+        exel.loc[(self.id - 1), 'Points'] = int(currentScore)
+        exel.loc[(self.id - 1), 'Rank'] = int(rank)
+        exel.loc[(self.id - 1), 'Completed'] = int(numChallengesCompleted)
+        exel.loc[(self.id - 1), 'Badges'] = badges
+        exel.loc[(self.id - 1), 'Referrals'] = int(numReferrals)
+        exel.loc[(self.id - 1), 'Referral-code'] = referralCode
+        exel.to_excel('accounts_data.xlsx', header=True, index=False)
 
+    @logger.catch
     # @retry
     def complete_quest(self, challengeId, name):
         json_data = {
@@ -84,6 +99,7 @@ class Onchain_Summer(Account):
             logger.success(f'Quest {name}: Успешно завершил задание')
             self.send_list += (f'\n{SUCCESS}Quest {name}: Успешно завершил задание')
 
+    @logger.catch
     @retry
     def speen_the_weel(self):
         self.send_list = ''
@@ -101,6 +117,7 @@ class Onchain_Summer(Account):
             self.send_list += (f'\n{SUCCESS}Нет доступных спинов, ждем до завтра...')
         return self.send_list
 
+    @logger.catch
     # @retry
     def check_quest(self, challengeId, name):
         json_data = {
@@ -119,6 +136,7 @@ class Onchain_Summer(Account):
         else:
             return True
 
+    @logger.catch
     # @retry
     def send_tx(self, name, to, data, value):
         value = int(self.w3.to_wei(value, 'ether')) if type(value) == float else value
@@ -156,6 +174,7 @@ class Onchain_Summer(Account):
         data = response['callData']['data']
         return to, value, data
 
+    @logger.catch
     @retry
     def registration(self):
         with open('invites.txt', 'r') as file:
@@ -222,6 +241,7 @@ class Onchain_Summer(Account):
                     file.write(f"\n{referralCode}")
                     logger.info(f'Записал инвайт код в файл')
 
+    @logger.catch
     @retry
     def claim_badge(self):
         self.send_list = ''
@@ -251,6 +271,7 @@ class Onchain_Summer(Account):
                 logger.success(f'Успешно склеймил "{badges[badge]}" badge')
                 self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
                 return self.send_list
+    @logger.catch
     @retry
     def Mister_Miggles(self):
         self.send_list = ''
@@ -261,6 +282,7 @@ class Onchain_Summer(Account):
             Onchain_Summer.complete_quest(self, challengeId='ocsChallenge_d0778cee-ad0b-46b9-93d9-887b917b2a1f', name='Mister Miggles')
         return self.send_list
 
+    @logger.catch
     @retry
     def Mister_Miggles_Song_A_Day(self):
         self.send_list = ''
@@ -271,6 +293,7 @@ class Onchain_Summer(Account):
             Onchain_Summer.complete_quest(self, challengeId='3Sx0O0fvmEre08aGa0ZsnR', name='Mister Miggles Song A Day')
         return self.send_list
 
+    @logger.catch
     @retry
     def Introducing_Coinbase_Wallet_web_app(self):
         self.send_list = ''
@@ -281,6 +304,7 @@ class Onchain_Summer(Account):
             Onchain_Summer.complete_quest(self, challengeId='78zcHkWSABcPWMoacVI9Vs', name='Introducing Coinbase Wallet web app')
         return self.send_list
 
+    @logger.catch
     @retry
     def Seasonal_Erosion_Relic_in_Winter(self):
         self.send_list = ''
@@ -290,6 +314,7 @@ class Onchain_Summer(Account):
             Onchain_Summer.complete_quest(self, challengeId='6fLQHp51Xb4t94cWVkD96R', name='Seasonal Erosion by Daniel Arsham')
         return self.send_list
 
+    @logger.catch
     @retry
     def Team_Liquid_OSPSeries(self):
         self.send_list = ''
@@ -300,6 +325,7 @@ class Onchain_Summer(Account):
             Onchain_Summer.complete_quest(self, challengeId='6VRBNN6qr2algysZeorek8', name='Team Liquid OSPSeries')
         return self.send_list
 
+    @logger.catch
     @retry
     def Onchain_Summer_Buildathon(self):
         self.send_list = ''
