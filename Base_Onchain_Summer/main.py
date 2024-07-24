@@ -68,7 +68,7 @@ def main():
             logger.info(f'Waiting next day...')
             time.sleep(0.3)
             print()
-            while int(datetime.datetime.now(datetime.timezone.utc).strftime("%d")) == day_now and int(datetime.datetime.now(datetime.timezone.utc).strftime("%H")) < 5:
+            while int(datetime.datetime.now(datetime.timezone.utc).strftime("%d")) == day_now and int(datetime.datetime.now(datetime.timezone.utc).strftime("%H")) < 10:
                 time.sleep(1300)
             day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
             start()
