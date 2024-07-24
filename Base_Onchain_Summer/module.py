@@ -271,6 +271,33 @@ class Onchain_Summer(Account):
                 logger.success(f'Успешно склеймил "{badges[badge]}" badge')
                 self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
                 return self.send_list
+
+    @logger.catch
+    @retry
+    def ETFEREUM(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='ocsChallenge_eba9e6f0-b7b6-4d18-8b99-a64aea045117',
+                                      name='ETFEREUM'):
+            to, value, data = Onchain_Summer.get_tx_data(self, address_nft='0xE8aD8b2c5Ec79d4735026f95Ba7C10DCB0D3732B')
+            Onchain_Summer.send_tx(self, name='ETFEREUM', to=to, data=data, value=value)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='ocsChallenge_eba9e6f0-b7b6-4d18-8b99-a64aea045117',
+                                          name='ETFEREUM')
+        return self.send_list
+
+    @logger.catch
+    @retry
+    def Celebrating_the_Ethereum_ETF(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='5e383RWcRtGAwGUorkGiYC',
+                                      name='Celebrating the Ethereum ETF'):
+            to, value, data = Onchain_Summer.get_tx_data(self, address_nft='0xb5408b7126142C61f509046868B1273F96191b6d')
+            Onchain_Summer.send_tx(self, name='Celebrating the Ethereum ETF', to=to, data=data, value=value)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='5e383RWcRtGAwGUorkGiYC',
+                                          name='Celebrating the Ethereum ETF')
+        return self.send_list
+
     @logger.catch
     @retry
     def Mister_Miggles(self):
