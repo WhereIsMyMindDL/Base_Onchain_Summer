@@ -1,2 +1,0 @@
-#1private_key
-#2private_key
