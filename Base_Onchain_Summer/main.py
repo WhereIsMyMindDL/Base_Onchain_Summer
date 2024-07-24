@@ -2,6 +2,7 @@ import random
 import datetime
 import time
 from loguru import logger
+import pandas as pd
 
 from help import Account, send_message, sleeping_between_wallets, intro, outro
 from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules
@@ -10,31 +11,26 @@ from module import Onchain_Summer
 day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
 
 def main():
-    with open('proxies.txt', 'r') as file:  # login:password@ip:port в файл proxy.txt
-        proxies = [row.strip().lower() for row in file]
-    with open('wallets.txt', 'r') as file:
-        wallets = [row.strip() for row in file]
+    with open('accounts_data.xlsx', 'rb') as file: # login:password@ip:port в файл proxy.txt
+        exel = pd.read_excel(file)
+
+    data = []
+    for index, row in exel.iterrows():
+        proxy = (row["Proxy"] if isinstance(row["Proxy"], str) else None)
+        data.append((row["Private Key"], proxy, int(index)+1))
 
     send_list = []
-    intro(wallets)
-    count_wallets = len(wallets)
-
-    if len(proxies) == 0:
-        proxies = [None] * len(wallets)
-    if len(proxies) != len(wallets):
-        logger.error('Proxies count doesn\'t match wallets count. Add proxies or leave proxies file empty')
-        return False
-
-    data = [(wallets[i], proxies[i]) for i in range(len(wallets))]
+    intro(len(data))
+    count_wallets = len(data)
 
     def start():
         global day_now
         if shuffle:
             random.shuffle(data)
-        for idx, (private_key, proxy) in enumerate(data, start=1):
-            account = Account(idx, private_key, proxy, "Base")
-            logger.info(f'{idx}/{count_wallets} | {account.address} | {proxy if proxy is not None else "Прокси отсутствуют"}')
-            send_list.append(f'{account.id}/{count_wallets} : [{account.address}]({"https://debank.com/profile/" + account.address})')
+        for idx, (private_key, proxy, id) in enumerate(data, start=1):
+            account = Account(id, private_key, proxy, "Base")
+            logger.info(f'{idx}/{count_wallets} | {id} - {account.address} | {proxy if proxy is not None else "Прокси отсутствуют"}')
+            send_list.append(f'{idx}/{count_wallets} : [{account.address}]({"https://debank.com/profile/" + account.address})')
 
             try:
                 work = Onchain_Summer(id=account.id, private_key=account.private_key, proxy=account.proxy, rpc="Base")
