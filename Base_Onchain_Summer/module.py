@@ -343,6 +343,16 @@ class Onchain_Summer(Account):
 
     @logger.catch
     @retry
+    def Seasonal_Erosion_Relic_in_Spring(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='77AnYyHtK1LqucwM9g0vqT', name='Seasonal Erosion Relic in Spring'):
+            Onchain_Summer.send_tx(self,  name='Seasonal Erosion Relic in Spring', to='0x2aa80a13395425EF3897c9684a0249a5226eA779', data='0xa0712d680000000000000000000000000000000000000000000000000000000000000003', value=0)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='77AnYyHtK1LqucwM9g0vqT', name='Seasonal Erosion Relic in Spring')
+        return self.send_list
+
+    @logger.catch
+    @retry
     def Team_Liquid_OSPSeries(self):
         self.send_list = ''
         if Onchain_Summer.check_quest(self, challengeId='6VRBNN6qr2algysZeorek8', name='Team Liquid OSPSeries'):
