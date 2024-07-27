@@ -44,7 +44,7 @@ RPC = {
     'Linea': 'https://rpc.linea.build',
     'zkFair': 'https://42766.rpc.thirdweb.com',
     'Mode': 'https://1rpc.io/mode',
-    'Base': 'https://base.llamarpc.com',
+    'Base': 'https://base-rpc.publicnode.com',
     'DBK': 'https://scan.dbkchain.io/',
 }
 
