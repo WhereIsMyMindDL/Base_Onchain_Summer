@@ -31,6 +31,7 @@ Onchain_Summer_Buildathon | 0.70$ | бейдж
 Team_Liquid_OSPSeries | 0.35$ | 500 XP
 Celebrating_the_Ethereum_ETF | 0.35$ | 250 XP
 ETFEREUM | 0.35$ | 150XP
+Seasonal_Erosion_Relic_in_Spring | 0.00$ | 1000 XP
 
 Olympic_Games_Paris | 0$ | 250 XP - не работает
 
