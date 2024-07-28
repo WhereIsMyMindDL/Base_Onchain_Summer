@@ -33,7 +33,8 @@ def main():
                 logger.info(f'{idx}/{count_wallets} | {id} - {account.address} | {proxy if proxy is not None else "Прокси отсутствуют"}')
                 send_list.append(f'{idx}/{count_wallets} : [{account.address}]({"https://debank.com/profile/" + account.address})')
                 work = Onchain_Summer(id=account.id, private_key=account.private_key, proxy=account.proxy, rpc="Base")
-                send_list.append(work.login())
+                if rotes_modules[0][0] != 'registration':
+                    send_list.append(work.login())
                 for function_name in rotes_modules:
                     if len(function_name) > 1:
                         random.shuffle(function_name)
