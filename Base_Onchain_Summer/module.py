@@ -85,7 +85,7 @@ class Onchain_Summer(Account):
         exel.to_excel('accounts_data.xlsx', header=True, index=False)
 
     @logger.catch
-    # @retry
+    @retry
     def complete_quest(self, challengeId, name):
         json_data = {
             'gameId': 2,
@@ -98,6 +98,8 @@ class Onchain_Summer(Account):
         if response['success']:
             logger.success(f'Quest {name}: Успешно завершил задание')
             self.send_list += (f'\n{SUCCESS}Quest {name}: Успешно завершил задание')
+        else:
+            Exception
 
     @logger.catch
     @retry
@@ -150,6 +152,7 @@ class Onchain_Summer(Account):
         if txstatus == 1:
             logger.success(f'Quest {name}: send txs: {self.scan + tx_hash}')
             self.send_list += (f'\n{SUCCESS}Quest {name}: send txs - [tx hash]({self.scan + tx_hash})')
+            sleeping_between_transactions()
 
         else:
             logger.error(f'Quest {name}: send txs: {self.scan + tx_hash}')
@@ -271,6 +274,54 @@ class Onchain_Summer(Account):
                 logger.success(f'Успешно склеймил "{badges[badge]}" badge')
                 self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
                 return self.send_list
+
+    @logger.catch
+    @retry
+    def do_quest(self, challengeId, name, address_nft):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId=challengeId, name=name):
+            to, value, data = Onchain_Summer.get_tx_data(self, address_nft=address_nft)
+            Onchain_Summer.send_tx(self, name=name, to=to, data=data, value=value)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId=challengeId, name=name)
+
+    @logger.catch
+    @retry
+    def Seasonal_Erosion_Relic_in_Summer(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='6mpsE4jgRI0GnuU3elo2XV', name='Seasonal Erosion Relic in Summer'):
+            Onchain_Summer.send_tx(self,  name='Seasonal Erosion Relic in Summer', to='0x2aa80a13395425EF3897c9684a0249a5226eA779', data='0xa0712d680000000000000000000000000000000000000000000000000000000000000004', value=0)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='6mpsE4jgRI0GnuU3elo2XV', name='Seasonal Erosion Relic in Summer')
+        return self.send_list
+
+    def Happy_Birthday_Toshi(self):
+        Onchain_Summer.do_quest(self, challengeId='1pjoNf5onjgsi7r9fWp3ob', name='Happy Birthday Toshi', address_nft='0xE65dFa5C8B531544b5Ae4960AE0345456D87A47D')
+        return self.send_list
+
+    def Onchain_Summer_Chibling(self):
+        Onchain_Summer.do_quest(self, challengeId='5Ip1kHz9vEZDTazTiBWbKh', name='Onchain Summer Chibling', address_nft='0x13F294BF5e26843C33d0ae739eDb8d6B178740B0')
+        return self.send_list
+
+    def ETH_cant_be_stopped(self):
+        Onchain_Summer.do_quest(self, challengeId='ocsChallenge_c1de2373-35ad-4f3c-ab18-4dfadf15754d', name='ETH cant be stopped', address_nft='0xb0FF351AD7b538452306d74fB7767EC019Fa10CF')
+        return self.send_list
+
+    def ETH_BREAKING_THROUGH(self):
+        Onchain_Summer.do_quest(self, challengeId='78AUXYw8UCyFUPE2zy9yMZ', name='ETH BREAKING THROUGH', address_nft='0x96E82d88c07eCa6a29B2AD86623397B689380652')
+        return self.send_list
+
+    def the_world_after_ETH_ETF_approval(self):
+        Onchain_Summer.do_quest(self, challengeId='ocsChallenge_65c17605-e085-4528-b4f1-76ce5f48da56', name='the world after ETH ETF approval', address_nft='0x955FdFdFd783C89Beb54c85f0a97F0904D85B86C')
+        return self.send_list
+
+    def EURC_Base_Launch(self):
+        Onchain_Summer.do_quest(self, challengeId='1iZiHPbqaIGW5F08bCit6J', name='EURC Base Launch', address_nft='0x615194d9695d0c02Fc30a897F8dA92E17403D61B')
+        return self.send_list
+
+    def Ethereum_ETF(self):
+        Onchain_Summer.do_quest(self, challengeId='ocsChallenge_ee0cf23e-74a1-4bb3-badf-037a6bbf35e8', name='Ethereum ETF', address_nft='0xC00F7096357f09d9f5FE335CFD15065326229F66')
+        return self.send_list
 
     @logger.catch
     @retry
