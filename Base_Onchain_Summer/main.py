@@ -1,14 +1,13 @@
+import time
 import random
 import datetime
-import time
-from loguru import logger
 import pandas as pd
+from loguru import logger
 
-from help import Account, send_message, sleeping_between_wallets, intro, outro
-from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules
 from module import Onchain_Summer
+from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules
+from help import Account, send_message, sleeping_between_wallets, intro, outro
 
-day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
 
 def main():
     with open('accounts_data.xlsx', 'rb') as file: # login:password@ip:port в файл proxy.txt
@@ -24,7 +23,6 @@ def main():
     count_wallets = len(data)
 
     def start():
-        global day_now
         if shuffle:
             random.shuffle(data)
         for idx, (private_key, proxy, id) in enumerate(data, start=1):
@@ -58,17 +56,11 @@ def main():
                 sleeping_between_wallets()
                 print()
         if 'speen_the_weel' == rotes_modules[0][0]:
-            print()
-            time.sleep(0.3)
             logger.info(f'Waiting next day...')
-            time.sleep(0.3)
-            print()
-            while int(datetime.datetime.now(datetime.timezone.utc).strftime("%d")) == day_now and int(datetime.datetime.now(datetime.timezone.utc).strftime("%H")) < 10:
-                time.sleep(1300)
-            day_now = int(datetime.datetime.now(datetime.timezone.utc).strftime("%d"))
+            while True:
+                if int(datetime.datetime.now(datetime.timezone.utc).strftime("%H")) == 10:
+                    break
             start()
-
     start()
-
     outro()
 main()
