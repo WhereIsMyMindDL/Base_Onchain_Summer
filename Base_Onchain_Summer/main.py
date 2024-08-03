@@ -5,9 +5,8 @@ import pandas as pd
 from loguru import logger
 
 from module import Onchain_Summer
-from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules
-from help import Account, send_message, sleeping_between_wallets, intro, outro
-
+from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules, min_balance
+from help import Account, send_message, sleeping_between_wallets, intro, outro, ERROR
 
 def main():
     with open('accounts_data.xlsx', 'rb') as file: # login:password@ip:port в файл proxy.txt
@@ -31,16 +30,21 @@ def main():
                 logger.info(f'{idx}/{count_wallets} | {id} - {account.address} | {proxy if proxy is not None else "Прокси отсутствуют"}')
                 send_list.append(f'{idx}/{count_wallets} : [{account.address}]({"https://debank.com/profile/" + account.address})')
                 work = Onchain_Summer(id=account.id, private_key=account.private_key, proxy=account.proxy, rpc="Base")
-                send_list.append(work.login())
-                for function_name in rotes_modules:
-                    if len(function_name) > 1:
-                        random.shuffle(function_name)
-                        for function_in_list in function_name:
-                            function = getattr(work, function_in_list[0])
+                balance = account.get_balance()
+                if balance['balance'] > min_balance:
+                    send_list.append(work.login())
+                    for function_name in rotes_modules:
+                        if len(function_name) > 1:
+                            random.shuffle(function_name)
+                            for function_in_list in function_name:
+                                function = getattr(work, function_in_list[0])
+                                send_list.append(function())
+                        else:
+                            function = getattr(work, function_name[0])
                             send_list.append(function())
-                    else:
-                        function = getattr(work, function_name[0])
-                        send_list.append(function())
+                else:
+                    logger.info(f'Недостаточный баланс...')
+                    send_list.append(f'{ERROR}Недостаточный баланс...')
 
             except Exception as e:
                 logger.error(f'{idx}/{count_wallets} Failed: {str(e)}')
