@@ -287,6 +287,16 @@ class Onchain_Summer(Account):
 
     @logger.catch
     @retry
+    def One_Year_On_Base(self):
+        self.send_list = ''
+        if Onchain_Summer.check_quest(self, challengeId='x6F6LP1G3ogs9cHRn0clh', name='One Year On Base'):
+            Onchain_Summer.send_tx(self,  name='One Year On Base', to='0x777777722D078c97c6ad07d9f36801e653E356Ae', data=f'0xa836f32f000000000000000000000000{self.address[2:]}0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000b4703a3a73aec16e764cbd210b0fde9efdab894100000000000000000000000000000000000000000000000000000000000000010000000000000000000000009652721d02b9db43f4311102820158abb4ecc95b00000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000', value=0.000111)
+            time.sleep(3)
+            Onchain_Summer.complete_quest(self, challengeId='x6F6LP1G3ogs9cHRn0clh', name='One Year On Base')
+        return self.send_list
+    
+    @logger.catch
+    @retry
     def Seasonal_Erosion_Relic_in_Summer(self):
         self.send_list = ''
         if Onchain_Summer.check_quest(self, challengeId='6mpsE4jgRI0GnuU3elo2XV', name='Seasonal Erosion Relic in Summer'):
