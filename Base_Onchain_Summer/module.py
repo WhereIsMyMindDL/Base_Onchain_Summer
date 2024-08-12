@@ -112,8 +112,8 @@ class Onchain_Summer(Account):
         response = requests.get('https://basehunt.xyz/api/spin-the-wheel', params=json_data, headers=self.session.headers).json()
         if response['spinData']['hasAvailableSpin']:
             response = self.session.post('https://basehunt.xyz/api/spin-the-wheel/execute', headers=self.session.headers, json=json_data).json()
-            logger.success(f'Выпало {response["spinData"]["lastSpinResult"]["points"]} поинтов...')
-            self.send_list += (f'\n{SUCCESS}Speen the weel: Выпало {response["spinData"]["lastSpinResult"]["points"]} поинтов...')
+            logger.success(f'Выпало {response["spinData"]["lastSpinResult"]["points"]} {response["spinData"]["lastSpinResult"]["type"]}...')
+            self.send_list += (f'\n{SUCCESS}Speen the weel: Выпало {response["spinData"]["lastSpinResult"]["points"]} {response["spinData"]["lastSpinResult"]["type"]}...')
         else:
             logger.info(f'Нет доступных спинов, ждем до завтра...')
             self.send_list += (f'\n{SUCCESS}Нет доступных спинов, ждем до завтра...')
