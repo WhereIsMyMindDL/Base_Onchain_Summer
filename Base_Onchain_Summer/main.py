@@ -8,6 +8,7 @@ from module import Onchain_Summer
 from settings import bot_status, shuffle, bot_id, bot_token, rotes_modules, min_balance
 from help import Account, send_message, sleeping_between_wallets, intro, outro, ERROR
 
+@logger.catch
 def main():
     with open('accounts_data.xlsx', 'rb') as file: # login:password@ip:port в файл proxy.txt
         exel = pd.read_excel(file)
