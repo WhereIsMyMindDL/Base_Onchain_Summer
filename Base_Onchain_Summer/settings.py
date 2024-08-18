@@ -26,41 +26,27 @@ donate | донат для получения бейджа | не работае
 
 Quests:
 Mister_Miggles | 0.70$ | 1000 XP
-Mister_Miggles_Song_A_Day | 0.35$ | 250 XP
 Introducing_Coinbase_Wallet_web_app | 0.35$ | 250 XP
-Seasonal_Erosion_Relic_in_Winter | 0$ | 250 XP
 Onchain_Summer_Buildathon | 0.70$ | бейдж
 Team_Liquid_OSPSeries | 0.35$ | 500 XP
 Celebrating_the_Ethereum_ETF | 0.35$ | 250 XP
 ETFEREUM | 0.35$ | 150XP
-Seasonal_Erosion_Relic_in_Spring | 0.00$ | 1000 XP
-Seasonal_Erosion_Relic_in_Summer | 0.00$ | 1000 XP
 Ethereum_ETF | 0.35$ | 150XP
-the_world_after_ETH_ETF_approval | 0.35$ | 150XP
 ETH_BREAKING_THROUGH | 0.35$ | 150XP
 ETH_cant_be_stopped | 0.35$ | 150XP
-Onchain_Summer_Chibling | 0.35$ | 250XP
 Happy_Birthday_Toshi | 0.35$ | 250XP
 EURC_Base_Launch | 0.35$ | 150XP
 
-One_Year_On_Base | 0.29$ | 1000XP
-
-Olympic_Games_Paris | 0$ | 250 XP - не работает
+STIX_Launch_Tournament_Pass | 0$ | 1000XP
 
 Eсли указать модули (не меньше 2ух) в [], то они перемешаются. Пример ниже
 
 '''
 rotes_modules = [
-    ['get_statistics'],
+    ['speen_the_weel'],
     [
-        ['Seasonal_Erosion_Relic_in_Summer'],
+        ['STIX_Launch_Tournament_Pass'],
         ['Ethereum_ETF'],
-        ['the_world_after_ETH_ETF_approval'],
-        ['ETH_BREAKING_THROUGH'],
-        ['ETH_cant_be_stopped'],
-        ['Onchain_Summer_Chibling'],
-        ['Happy_Birthday_Toshi'],
-        ['EURC_Base_Launch'],
     ],
     ['get_statistics']
 ]
