@@ -219,7 +219,7 @@ class Onchain_Summer(Account):
             logger.success(f'Quest {name}: Успешно завершил задание')
             self.send_list += (f'\n{SUCCESS}Quest {name}: Успешно завершил задание')
         else:
-            Exception
+            raise
 
     def check_quest(self, challengeId, name):
         json_data = {
