@@ -195,7 +195,7 @@ class Onchain_Summer(Account):
             if response['success']:
                 logger.success(f'Успешно склеймил "{badges[badge]}" badge')
                 self.send_list += (f'\n{SUCCESS}Claim badge: Успешно склеймил "{badges[badge]}" badge')
-                return self.send_list
+        return self.send_list
             
     @retry
     def do_quest(self, challengeId, name, address_nft):
