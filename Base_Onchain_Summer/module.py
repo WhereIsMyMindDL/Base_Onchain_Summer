@@ -198,10 +198,13 @@ class Onchain_Summer(Account):
         return self.send_list
             
     @retry
-    def do_quest(self, challengeId, name, address_nft):
+    def do_quest(self, challengeId, name, **kwargs):
         self.send_list = ''
         if Onchain_Summer.check_quest(self, challengeId=challengeId, name=name):
-            to, value, data = Onchain_Summer.get_tx_data(self, address_nft=address_nft)
+            if kwargs.get('to'):
+                to, value, data = kwargs['to'], kwargs['value'], kwargs['data']
+            else:
+                to, value, data = Onchain_Summer.get_tx_data(self, address_nft=kwargs['address_nft'])
             Onchain_Summer.send_tx(self, name=name, to=to, data=data, value=value)
             time.sleep(3)
             Onchain_Summer.complete_quest(self, challengeId=challengeId, name=name)
@@ -300,8 +303,23 @@ class Onchain_Summer(Account):
         data = response_json['callData']['data']
         return to, value, data
 
+    def Live_and_let_live(self):
+        Onchain_Summer.do_quest(self,
+                                challengeId='4MMQPGoZviSqLoJgaVDY05',
+                                name='Live and let live',
+                                to='0x279dFFD2b14a4A60e266bEfb0D2c10E695D58113',
+                                value=0.0005,
+                                data=f'0x574fed17000000000000000000000000{self.address[2:]}000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000000')
+        return self.send_list
+
     def STIX_Launch_Tournament_Pass(self):
-        Onchain_Summer.do_quest(self, challengeId='ocsChallenge_bd5208b5-ff1e-4f5b-8522-c4d4ebb795b7', name='STIX Launch Tournament Pass', address_nft='0xa7891c87933BB99Db006b60D8Cb7cf68141B492f')
+        Onchain_Summer.do_quest(self,
+                                challengeId='ocsChallenge_bd5208b5-ff1e-4f5b-8522-c4d4ebb795b7',
+                                name='STIX Launch Tournament Pass',
+                                address_nft='0xa7891c87933BB99Db006b60D8Cb7cf68141B492f',
+                                to='0xa7891c87933BB99Db006b60D8Cb7cf68141B492f',
+                                value=0,
+                                data=f'0x84bb1e42000000000000000000000000{self.address[2:]}0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d4da48b00000000')
         return self.send_list
 
     def Happy_Birthday_Toshi(self):
