@@ -34,9 +34,9 @@ ETH_cant_be_stopped | 0.35$ | 150XP
 Happy_Birthday_Toshi | 0.35$ | 250XP
 EURC_Base_Launch | 0.35$ | 150XP
 STIX_Launch_Tournament_Pass | 0$ | 1000XP
-Live_and_let_live | 1.3$ | 5000XP
-
+Live_and_let_live | 1.3$ | 500XP
 Forbes_Web3_INSPIRE | 0$ | 1000XP
+Truworld_Onchain_Summer_Pass | 0$ | 500XP
 
 Eсли указать модули (не меньше 2ух) в [], то они перемешаются. Пример ниже
 
